@@ -1,0 +1,70 @@
+-- For this project, I downloaded Spotify data from Kaggle.
+-- Then I created a table to insert Spotify data into.
+-- Finally, I performed analytics on the data using SQL. 
+
+--Creating the table: 
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+
+--Then I inserted the Spotify Data .csv into the table.
+
+--Next, I explored the data using the following SQL. 
+
+--What is the average danceability by artist 
+SELECT artist_name, Avg(danceability) 
+FROM Spotifydata
+GROUP BY artist_name;
+
+--What is the average danceability by track 
+SELECT track_name, Avg(danceability) 
+FROM Spotifydata
+GROUP BY track_name;
+
+--What are the top 10 songs and their artists based on popularity? 
+SELECT track_name, artist_name, popularity
+FROM Spotifydata
+ORDER BY popularity DESC
+LIMIT 10;
+
+--What artist released the longest song?
+SELECT artist_name, max(duration_ms)
+FROM Spotifydata;
+
+--What's the average danceability for the 10 most popular songs?
+SELECT avg(danceability)
+FROM Spotifydata
+ORDER BY popularity DESC
+LIMIT 10;
+
+--What are the names of the tracks and their artists with an above average danceabilty?
+SELECT artist_name, track_name
+FROM Spotifydata
+WHERE danceability >= 
+    (SELECT avg(danceability)
+    FROM Spotifydata);
+    
+--How many songs are above average for both danceability and energy?
+SELECT distinct avg(danceability), avg(energy)
+FROM Spotifydata
+
+SELECT count(track_name)
+FROM Spotifydata
+WHERE danceability > 0.68572 and energy > 0.64636; 
