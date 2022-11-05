@@ -53,3 +53,26 @@ FROM(
   WHERE tweet_date BETWEEN '2022-01-01' AND '2022-12-31' 
   GROUP BY user_id) AS total_tweets
 GROUP BY tweets_num;
+
+--Write a query to get the average stars for each product every month. 
+--The output should include the month in numerical value, product id, and average star rating rounded to two decimal places. Sort the output based on month followed by the product id.
+SELECT EXTRACT(MONTH from submit_date) AS Month, product_id, ROUND(AVG(stars),2) 
+FROM reviews
+GROUP BY Month, product_id
+ORDER BY Month, product_id;
+
+--Which personal profiles have more followers then the company they work for?
+SELECT p.profile_id
+FROM personal_profiles p
+JOIN company_pages c
+ON p.employer_id = c.company_id
+WHERE p.followers > c.followers
+ORDER BY p.profile_id ASC;
+
+--Who are the top three customers that have spent at least $1000 total and how many products have the purchased?
+SELECT user_id, count(user_id) AS product_num
+FROM user_transactions
+GROUP BY user_id
+HAVING SUM(spend) >= 1000
+ORDER BY product_num DESC, SUM(spend) DESC
+LIMIT 3;
