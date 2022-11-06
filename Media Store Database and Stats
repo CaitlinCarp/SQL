@@ -100,3 +100,25 @@ WHERE e.Title = "Sales Support Agent" AND i.InvoiceDate BETWEEN '2009-01-01' AND
 GROUP BY e.LastName
 ORDER BY ROUND(sum(i.Total),2) DESC
 Limit 1;
+
+--Which playlist(s) of songs costs the most money?
+SELECT pt.PlaylistID, (COUNT(pt.TrackId)*t.UnitPrice) AS TotalPrice
+FROM playlist_track pt
+JOIN tracks t
+ON pt.TrackId = t.TrackId
+GROUP BY pt.playlistID
+ORDER BY TotalPrice DESC
+LIMIT 2;
+
+--Which album had the most song sales, how many songs were sold, and what is the artist of that album?
+SELECT COUNT(ii.TrackId) AS SongsSold, al.Title AS AlbumName, a.Name AS Artisit
+FROM invoice_items ii
+JOIN tracks t
+ON ii.TrackID = t.TrackId
+JOIN albums al
+ON t.AlbumId = al.AlbumID
+JOIN artists a
+ON al.ArtistID = a.ArtistID
+GROUP BY AlbumName
+ORDER BY COUNT(ii.TrackId) DESC
+LIMIT 1;
