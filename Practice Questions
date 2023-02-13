@@ -1,11 +1,12 @@
---Who are the candidates who possess all of the required skills (proficient in Python, Tableau, and PostgreSQL) for the job? The output should be in ascending order.
+--All of the following are practice questions from various websites such as DataLemur (DL) and Leetcode (LC)
+--(DL) Who are the candidates who possess all of the required skills (proficient in Python, Tableau, and PostgreSQL) for the job? The output should be in ascending order.
 SELECT candidate_id
 FROM candidates
 WHERE skill IN ('Python', 'Tableau', 'PostgreSQL')
 GROUP BY candidate_id
 HAVING COUNT(skill) = 3;
 
---What are the page IDs of all the Facebook pages that don't have any likes? The output should be in ascending order.
+--(DL) What are the page IDs of all the Facebook pages that don't have any likes? The output should be in ascending order.
 SELECT p.page_id
 FROM pages p
 LEFT JOIN page_likes pl
@@ -13,19 +14,19 @@ ON p.page_id = pl.page_id
 WHERE pl.liked_date IS NULL
 ORDER BY p.page_id ASC;
 
---Which parts have begun the assembly process but are not yet finished?
+--(DL) Which parts have begun the assembly process but are not yet finished?
 SELECT part 
 FROM parts_assembly
 WHERE finish_date IS NULL
 GROUP BY part;
 
---How many users view the content on a laptop vs a mobile device?
+--(DL) How many users view the content on a laptop vs a mobile device?
 SELECT
   SUM(CASE WHEN device_type = 'laptop' THEN 1 ELSE 0 END) AS laptop_views,
   SUM(CASE WHEN device_type IN ('tablet', 'phone') THEN 1 ELSE 0 END) AS mobile_views
 FROM viewership;
 
---List the top three cities that have the most completed trade orders in descending order.
+--(DL) List the top three cities that have the most completed trade orders in descending order.
 SELECT u.city, COUNT(u.city) AS total_complete
 FROM users u
 LEFT JOIN trades t
@@ -35,7 +36,7 @@ GROUP BY u.city
 ORDER BY total_complete DESC
 LIMIT 3;
 
---Given a table of bank deposits and withdrawals, return the final balance for each account.
+--(DL) Given a table of bank deposits and withdrawals, return the final balance for each account.
 SELECT account_id, 
   SUM(
   CASE 
@@ -45,7 +46,7 @@ SELECT account_id,
 FROM transactions
 GROUP BY account_id;
 
---Obtain a histogram of tweets posted per user in 2022. Output the tweet count per user as the bucket, and then the number of Twitter users who fall into that bucket.
+--(DL) Obtain a histogram of tweets posted per user in 2022. Output the tweet count per user as the bucket, and then the number of Twitter users who fall into that bucket.
 SELECT tweets_num AS tweet_bucket, COUNT(user_id) AS user_nums
 FROM(
   SELECT user_id, COUNT(tweet_id) AS tweets_num 
@@ -54,14 +55,14 @@ FROM(
   GROUP BY user_id) AS total_tweets
 GROUP BY tweets_num;
 
---Write a query to get the average stars for each product every month. 
+--(DL) Write a query to get the average stars for each product every month. 
 --The output should include the month in numerical value, product id, and average star rating rounded to two decimal places. Sort the output based on month followed by the product id.
 SELECT EXTRACT(MONTH from submit_date) AS Month, product_id, ROUND(AVG(stars),2) 
 FROM reviews
 GROUP BY Month, product_id
 ORDER BY Month, product_id;
 
---Which personal profiles have more followers then the company they work for?
+--(DL) Which personal profiles have more followers then the company they work for?
 SELECT p.profile_id
 FROM personal_profiles p
 JOIN company_pages c
@@ -69,10 +70,30 @@ ON p.employer_id = c.company_id
 WHERE p.followers > c.followers
 ORDER BY p.profile_id ASC;
 
---Who are the top three customers that have spent at least $1000 total and how many products have the purchased?
+--(DL) Who are the top three customers that have spent at least $1000 total and how many products have the purchased?
 SELECT user_id, count(user_id) AS product_num
 FROM user_transactions
 GROUP BY user_id
 HAVING SUM(spend) >= 1000
 ORDER BY product_num DESC, SUM(spend) DESC
 LIMIT 3;
+
+--(LC) Write an SQL query to find for each user, the join date and the number of orders they made as a buyer in 2019.
+SELECT u.user_id AS buyer_id, u.join_date, count(o.buyer_id) AS orders_in_2019
+FROM users u
+LEFT JOIN orders o
+ON o.buyer_id = u.user_id
+AND year(o.order_date) = 2019
+GROUP BY u.user_id;
+
+--(LC) Write an SQL query to report the Capital gain/loss for each stock.
+SELECT stock_name,  
+    SUM(
+        Case   
+            WHEN operation = 'Sell' Then price
+            WHEN operation = 'Buy' Then -price
+            END) AS capital_gain_loss
+FROM stocks
+GROUP BY stock_name;
+
+
