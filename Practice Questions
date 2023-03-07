@@ -122,7 +122,6 @@ FROM open_send_CTE;
 
 --(DL) Calculate the 3-day rolling average of tweets published by each user for each date that a tweet was posted. 
 --Output the user id, tweet date, and rolling averages rounded to 2 decimal places.
-
 SELECT user_id, 
   tweet_date, 
  ROUND(AVG(COUNT(tweet_id)) OVER
@@ -132,4 +131,26 @@ SELECT user_id,
   ), 2) AS rolling_avg_3days
 FROM tweets
 GROUP BY user_id, tweet_date;
+
+--(DL)Write a query to obtain the sum of the odd-numbered and even-numbered measurements on a particular day, in two different columns.
+WITH measurements_in_order AS(
+  SELECT 
+    ROW_NUMBER() OVER(PARTITION BY DATE(measurement_time) ORDER BY measurement_time),
+    measurement_value,
+    measurement_time
+    FROM measurements)
+
+SELECT
+DATE(measurement_time) AS measurement_day,
+SUM(CASE
+  WHEN MOD(row_number, 2) <> 0 THEN measurement_value
+    ELSE 0
+    END) AS odd_sum,
+SUM(CASE
+  WHEN MOD(row_number, 2) = 0 THEN measurement_value
+    ELSE 0
+    END) AS even_sum  
+FROM measurements_in_order
+GROUP BY DATE(measurement_time)
+ORDER BY DATE(measurement_time);
 
